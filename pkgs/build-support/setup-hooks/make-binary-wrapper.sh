@@ -1,3 +1,12 @@
+# Assert that FILE exists and is executable
+#
+# assertExecutable FILE
+assertExecutable() {
+    local file="$1"
+    [[ -f "$file" && -x "$file" ]] || \
+        die "Cannot wrap '$file' because it is not an executable file"
+}
+
 # Generate a binary executable wrapper for wrapping an executable.
 # The binary is compiled from generated C-code using gcc.
 # makeBinaryWrapper EXECUTABLE OUT_PATH ARGS
@@ -38,6 +47,7 @@ makeDocumentedCWrapper() {
 makeCWrapper() {
     local argv0 n params cmd main flagsBefore flags executable params length
     executable=$(escapeStringLiteral "$1")
+    assertExecutable "$1"
     params=("$@")
     length=${#params[*]}
     for ((n = 1; n < length; n += 1)); do
